@@ -2,8 +2,6 @@
 
 ## **Script to install and route polipo to tor**
 
->![badge]
-
 This script installs and route polipo to tor, so all your traffic will be anonymized.
 
 ## Usage
