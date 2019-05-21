@@ -1,0 +1,68 @@
+#!/bin/bash
+
+##Installing TOR and Polipo##
+
+apt install tor & apt install polipo
+
+##Making sure installations were succesfull##
+
+if command -v polipo >/dev/null 2>&1
+ 	then
+ 	tput smso;
+ 	echo "Polipo succesfully installed"
+ 	tput rmso;
+else
+	tput smso;
+	echo "Polipo installation failed, please install manually. Aborting."
+	tput rmso;
+	exit 1
+fi
+
+if command -v tor >/dev/null 2>&1
+ 	then
+ 	tput smso;
+ 	echo "TOR succesfully installed"
+ 	tput rmso;
+else
+	tput smso;
+	echo "Tor installation failed, please install manually. Aborting."
+	tput rmso;
+	exit 1
+fi
+
+
+##Editing Polipo to route trough TOR"
+
+if [ -f ~/.polipo ]
+	then
+	  echo "socksParentProxy = localhost:9050
+diskCacheRoot=""
+disableLocalInterface=true" >> ~/.polipo
+	else
+	 echo "socksParentProxy = localhost:9050
+diskCacheRoot=""
+disableLocalInterface=true" >> /etc/polipo/config
+fi
+
+##Enabling polipo##
+
+systemctl enable polipo
+
+##Creating startup file##
+		echo "#!/bin/bash
+##tor2polipo startup script##
+systemctl start tor & systemctl restart polipo" > /etc/init.d/tor2polipo
+chmod +x /etc/init.d/tor2polipo
+
+##Starting TOR and Polipo##
+systemctl start tor & systemctl restart polipo
+
+##Setting proxy##
+export {http,https,ftp}_proxy="http://localhost:8123"
+
+##Completed message##
+tput smso;
+echo "tor2polipo installer finished, Now test if you are protected at https://check.torproject.org/"
+echo "If you want to stop routing through tor switch off the proxy in settings"
+tput rmso;
+exit 0
