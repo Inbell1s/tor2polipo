@@ -55,7 +55,8 @@ systemctl start tor & systemctl restart polipo" > /etc/init.d/tor2polipo
 chmod +x /etc/init.d/tor2polipo
 
 ##Starting TOR and Polipo##
-systemctl start tor & systemctl restart polipo
+service polipo start& service tor start
+
 
 ##Setting proxy##
 export {http,https,ftp}_proxy="http://localhost:8123"
